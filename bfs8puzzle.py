@@ -14,7 +14,7 @@ def search_zero(l):
 
 # 9個の要素が全て等しければTrue, 1つでも違えばFalseを返す
 def check_state(state, state_dash):
-    return all([True if state[i] == state_dash[i] else False for i in range(9)])
+    return all([state[i] == state_dash[i] for i in range(9)])
 
 
 def bfs(s, g):
@@ -49,13 +49,13 @@ def bfs(s, g):
             S_dash_dash[point] = 0
             S_dash_dash[zero] = swap
             # 過去に探索したことがあるかログを探索する。なければログとキューに追加する。
-            if not any([True if check_state(S_dash_dash, l) else False for l in log]):
+            if not any([check_state(S_dash_dash, l) for l in log]):
                 S_dash_dash[9] += 1
                 que.append(S_dash_dash)
                 log.append(S_dash_dash)
             # ゴールと状態が等しければ探索までの長さを返して終了
             if check_state(S_dash_dash, g):
-                return S_dash_dash[-1]
+                return S_dash_dash[9]
     return -1
 
 

@@ -13,25 +13,20 @@ def search_zero(l):
             return l.index(i)
 
 
-# 9個の要素が全て等しければTrue, 1つでも違えばFalseを返す
-def check_state(state, state_dash):
-    return all([state[i] == state_dash[i] for i in range(9)])
-
-
 def bfs(s, g):
     # 探索済みかどうか状態をログでとる
-    log = []
-    # 10番目の要素に移動回数を付与する(比較はそれより前の9要素)
-    s.append(1)
+    log = {}
     S_dash = deepcopy(s)
     # 上下左右に行く時の配列移動
     up_down_left_right = [-3, 3, -1, 1]
     que = deque()
-    log.append(S_dash)
+    g_tuple = tuple(g)
+    log[tuple(S_dash)] = 1
     que.append(S_dash)
 
     while not (len(que) == 0):
         ss = que.popleft()
+        ss_tuple = tuple(ss)
         zero = search_zero(ss)
         for i in range(4):
             # 左端だったら左にはいけない
@@ -49,14 +44,15 @@ def bfs(s, g):
             swap = S_dash_dash[point]
             S_dash_dash[point] = 0
             S_dash_dash[zero] = swap
+            S_dd_tuple = tuple(S_dash_dash)
             # 過去に探索したことがあるかログを探索する。なければログとキューに追加する。
-            if not any([check_state(S_dash_dash, l) for l in log]):
-                S_dash_dash[9] += 1
+            if log.get(S_dd_tuple) is None:
+                log[S_dd_tuple] = log[ss_tuple] + 1
                 que.append(S_dash_dash)
-                log.append(S_dash_dash)
-            # ゴールと状態が等しければ探索までの長さを返して終了
-            if check_state(S_dash_dash, g):
-                return S_dash_dash[9]
+            # ゴールに訪問していれば終了
+            if log.get(g_tuple) is not None:
+                return log[g_tuple]
+
     return -1
 
 
